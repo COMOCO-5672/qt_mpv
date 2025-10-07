@@ -14,6 +14,78 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES qt_mpv_zh_CN.ts)
 
+# build mpv project
+find_program(MESON_EXECUTABLE meson REQUIRED)
+find_program(NINJA_EXECUTABLE ninja REQUIRED)
+
+set(MPV_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mpv)
+set(MPV_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpv-build)
+set(MPV_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpv-install)
+
+set(MPV_BUILD_OPTIONS
+    -Dlibmpv=true
+    -Dcplayer=false
+    -Dbuild-date=false
+    -Dmanpage-build=disabled
+    -Dpdf-build=disabled
+    -Dlua=disabled
+    -Djavascript=disabled
+    -Dlibarchive=disabled
+    -Dlibbluray=disabled
+    -Ddvdnav=disabled
+    -Duchardet=disabled
+    -Drubberband=disabled
+    -Dlcms2=disabled
+    -Dopenal=disabled
+    -Dspirv-cross=disabled
+    -Dvulkan=disabled
+    -Dshaderc=disabled
+    -Dgl=enabled
+    -Dvdpau=disabled
+    -Dvaapi=disabled
+    -Dwayland=disabled
+    -Dxv=disabled
+    -Dsdl2=disabled
+    -Degl-angle=disabled
+    -Degl-angle-win32=disabled
+    -Dplain-gl=enabled
+    -Dtests=false
+)
+
+add_custom_command(
+    OUTPUT ${MPV_BUILD_DIR}/build.ninja
+    COMMAND ${MESON_EXECUTABLE} setup ${MPV_BUILD_DIR} ${MPV_SOURCE_DIR} 
+            --prefix=${MPV_INSTALL_DIR} 
+            ${MPV_BUILD_OPTIONS}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Configuring mpv with Meson..."
+)
+
+add_custom_command(
+    OUTPUT ${MPV_INSTALL_DIR}/lib/libmpv.a
+    COMMAND ${NINJA_EXECUTABLE} -C ${MPV_BUILD_DIR} install
+    DEPENDS ${MPV_BUILD_DIR}/build.ninja
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Building and installing mpv..."
+)
+
+add_library(mpv::libmpv STATIC IMPORTED)
+set_target_properties(mpv::libmpv PROPERTIES
+    IMPORTED_LOCATION ${MPV_INSTALL_DIR}/lib/libmpv.a
+)
+
+target_include_directories(mpv::libmpv INTERFACE
+    ${MPV_SOURCE_DIR}
+    ${MPV_SOURCE_DIR}/include
+    ${MPV_BUILD_DIR}
+)
+
+add_custom_target(mpv_build ALL
+    DEPENDS ${MPV_INSTALL_DIR}/lib/libmpv.a
+)
+
+add_dependencies(mpv::libmpv mpv_build)
+
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
