@@ -54,8 +54,8 @@ set(MPV_BUILD_OPTIONS
 
 add_custom_command(
     OUTPUT ${MPV_BUILD_DIR}/build.ninja
-    COMMAND ${MESON_EXECUTABLE} setup ${MPV_BUILD_DIR} ${MPV_SOURCE_DIR} 
-            --prefix=${MPV_INSTALL_DIR} 
+    COMMAND ${MESON_EXECUTABLE} setup ${MPV_BUILD_DIR} ${MPV_SOURCE_DIR}
+            --prefix=${MPV_INSTALL_DIR}
             ${MPV_BUILD_OPTIONS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Configuring mpv with Meson..."
@@ -90,6 +90,8 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
+        mpvwidget.h
+        mpvwidget.cpp
         mainwindow.ui
         ${TS_FILES}
 )
@@ -121,7 +123,19 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(qt_mpv PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+find_package(Qt6 COMPONENTS
+    Core
+    Gui
+    Widgets
+    OpenGLWidgets
+    LinguistTools
+    REQUIRED
+)
+
+target_link_libraries(qt_mpv PRIVATE 
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::OpenGLWidgets
+        opengl32)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

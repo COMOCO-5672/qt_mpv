@@ -11,7 +11,8 @@
                 "D:/msys64/mingw64/include/qt6/QtCore",
                 "D:/msys64/mingw64/include/qt6/QtGui",
                 "D:/msys64/mingw64/include/qt6/QtWidgets",
-                "D:/msys64/mingw64/include/qt6/QtOpenGL"
+                "D:/msys64/mingw64/include/qt6/QtOpenGL",
+                "D:/msys64/mingw64/include/qt6/QtOpenGLWidgets"
             ],
             "defines": [
                 "_DEBUG",

@@ -24,6 +24,7 @@
         "*.wsd": "plantuml",
         "*.uml": "plantuml",
         "*.qss": "css",
-        "qmainwindow": "cpp"
+        "qmainwindow": "cpp",
+        "qopenglwidget": "cpp"
     }
 }
