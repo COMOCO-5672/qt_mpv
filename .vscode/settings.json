@@ -1,0 +1,20 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_PREFIX_PATH": "D:/msys64/mingw64",
+        "CMAKE_C_COMPILER": "D:/msys64/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "D:/msys64/mingw64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "D:/msys64/mingw64/bin/ninja.exe"
+    },
+    "cmake.generator": "Ninja",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureOnOpen": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "cmake.cmakePath": "D:/msys64/mingw64/bin/cmake.exe",
+    "terminal.integrated.env.windows": {
+      "PATH": "D:\\msys64\\mingw64\\bin;D:\\msys64\\usr\\bin;${env:PATH}"
+    },
+    "terminal.integrated.defaultProfile.windows": "MSYS2 MinGW64",
+    "cmake.environment": {
+        "PATH": "D:/msys64/mingw64/bin;D:/msys64/usr/bin;${env:PATH}"
+    }
+}

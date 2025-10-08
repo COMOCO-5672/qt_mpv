@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "MSYS2 MinGW64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/msys64/mingw64/include/**",
+                "D:/msys64/mingw64/include/qt6/**",
+                "D:/msys64/mingw64/include/qt6/QtCore",
+                "D:/msys64/mingw64/include/qt6/QtGui",
+                "D:/msys64/mingw64/include/qt6/QtWidgets",
+                "D:/msys64/mingw64/include/qt6/QtOpenGL"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "QT_CORE_LIB",
+                "QT_GUI_LIB",
+                "QT_WIDGETS_LIB",
+                "QT_OPENGL_LIB"
+            ],
+            "compilerPath": "D:/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
