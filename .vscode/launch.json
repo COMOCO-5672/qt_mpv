@@ -25,7 +25,8 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Build Project"
+            "preLaunchTask": "Build Project",
+            "visualizerFile": "c:\\Users\\77532\\AppData\\Roaming\\Code\\User\\workspaceStorage\\2f2578477b218338688df04d8ea88463\\tonka3000.qtvsctools\\qt.natvis.xml"
         },
         {
             "name": "Debug with Qt Creator",
@@ -54,7 +55,8 @@
             "preLaunchTask": "Build Project",
             "logging": {
                 "engineLogging": true
-            }
+            },
+            "visualizerFile": "c:\\Users\\77532\\AppData\\Roaming\\Code\\User\\workspaceStorage\\2f2578477b218338688df04d8ea88463\\tonka3000.qtvsctools\\qt.natvis.xml"
         }
     ]
 }

@@ -4,6 +4,8 @@
             "name": "MSYS2 MinGW64",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/mpv/**",
+                "${workspaceFolder}/mpv/include",
                 "D:/msys64/mingw64/include/**",
                 "D:/msys64/mingw64/include/qt6/**",
                 "D:/msys64/mingw64/include/qt6/QtCore",
