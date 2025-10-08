@@ -22,6 +22,8 @@ set(MPV_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mpv)
 set(MPV_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpv-build)
 set(MPV_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/mpv-install)
 
+message(STATUS "MPV_SOURCE_DIR: ${MPV_SOURCE_DIR}")
+
 set(MPV_BUILD_OPTIONS
     -Dlibmpv=true
     -Dcplayer=false
@@ -61,27 +63,59 @@ add_custom_command(
     COMMENT "Configuring mpv with Meson..."
 )
 
-add_custom_command(
-    OUTPUT ${MPV_INSTALL_DIR}/lib/libmpv.a
-    COMMAND ${NINJA_EXECUTABLE} -C ${MPV_BUILD_DIR} install
-    DEPENDS ${MPV_BUILD_DIR}/build.ninja
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Building and installing mpv..."
-)
-
-add_library(mpv::libmpv STATIC IMPORTED)
-set_target_properties(mpv::libmpv PROPERTIES
-    IMPORTED_LOCATION ${MPV_INSTALL_DIR}/lib/libmpv.a
-)
+if(WIN32)
+    # 设置 Windows 特定的文件名
+    set(MPV_IMPORT_LIB "libmpv.dll.a")
+    set(MPV_DLL "libmpv-2.dll")
+    
+    add_custom_command(
+        OUTPUT ${MPV_INSTALL_DIR}/lib/${MPV_IMPORT_LIB}
+        COMMAND ${NINJA_EXECUTABLE} -C ${MPV_BUILD_DIR} install
+        DEPENDS ${MPV_BUILD_DIR}/build.ninja
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Building and installing mpv..."
+    )
+    
+    add_library(mpv::libmpv STATIC IMPORTED)
+    set_target_properties(mpv::libmpv PROPERTIES
+        IMPORTED_LOCATION ${MPV_INSTALL_DIR}/lib/${MPV_IMPORT_LIB}
+    )
+    
+    add_custom_target(mpv_build ALL
+        DEPENDS ${MPV_INSTALL_DIR}/lib/${MPV_IMPORT_LIB}
+    )
+    
+    # 添加 DLL 复制命令
+    add_custom_command(TARGET mpv_build POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${MPV_INSTALL_DIR}/bin/${MPV_DLL}
+            ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Copying mpv DLL to build directory"
+    )
+else()
+    # 非 Windows 平台保持原样
+    add_custom_command(
+        OUTPUT ${MPV_INSTALL_DIR}/lib/libmpv.a
+        COMMAND ${NINJA_EXECUTABLE} -C ${MPV_BUILD_DIR} install
+        DEPENDS ${MPV_BUILD_DIR}/build.ninja
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Building and installing mpv..."
+    )
+    
+    add_library(mpv::libmpv STATIC IMPORTED)
+    set_target_properties(mpv::libmpv PROPERTIES
+        IMPORTED_LOCATION ${MPV_INSTALL_DIR}/lib/libmpv.a
+    )
+    
+    add_custom_target(mpv_build ALL
+        DEPENDS ${MPV_INSTALL_DIR}/lib/libmpv.a
+    )
+endif()
 
 target_include_directories(mpv::libmpv INTERFACE
     ${MPV_SOURCE_DIR}
     ${MPV_SOURCE_DIR}/include
     ${MPV_BUILD_DIR}
-)
-
-add_custom_target(mpv_build ALL
-    DEPENDS ${MPV_INSTALL_DIR}/lib/libmpv.a
 )
 
 add_dependencies(mpv::libmpv mpv_build)
@@ -135,6 +169,7 @@ find_package(Qt6 COMPONENTS
 target_link_libraries(qt_mpv PRIVATE 
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGLWidgets
+        mpv::libmpv
         opengl32)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
