@@ -14,14 +14,12 @@ MpvWidget::MpvWidget(QWidget *parent) : QOpenGLWidget(parent) {
     if (!mpv_) {
         qFatal("Could not create mpv context");
     }
-    
-    // 设置 mpv 选项
+
     mpv_set_option_string(mpv_, "config", "no");
     mpv_set_option_string(mpv_, "input-default-bindings", "yes");
     mpv_set_option_string(mpv_, "input-vo-keyboard", "yes");
     mpv_set_option_string(mpv_, "osc", "no");
-    
-    // Windows 特定设置
+
 #ifdef _WIN32
     mpv_set_option_string(mpv_, "gpu-api", "d3d11");
     mpv_set_option_string(mpv_, "hwdec", "d3d11va");
@@ -30,8 +28,7 @@ MpvWidget::MpvWidget(QWidget *parent) : QOpenGLWidget(parent) {
     if (mpv_initialize(mpv_) < 0) {
         qFatal("Could not initialize mpv context");
     }
-    
-    // 设置事件回调
+
     mpv_set_wakeup_callback(mpv_, &MpvWidget::on_mpv_events, this);
 }
 
@@ -45,7 +42,7 @@ MpvWidget::~MpvWidget() {
 }
 
 void MpvWidget::initializeGL() {
-    // 创建 mpv 的 OpenGL 渲染上下文
+
     mpv_opengl_init_params gl_init{get_proc_address, nullptr};
     
     mpv_render_param params[] = {
@@ -57,8 +54,7 @@ void MpvWidget::initializeGL() {
     if (mpv_render_context_create(&mpv_gl_context_, mpv_, params) < 0) {
         qFatal("Failed to create mpv render context");
     }
-    
-    // 连接 frameSwapped 信号
+
     connect(this, &QOpenGLWidget::frameSwapped, this, &MpvWidget::onFrameSwapped);
 }
 
@@ -83,7 +79,7 @@ void MpvWidget::paintGL() {
 }
 
 void MpvWidget::onFrameSwapped() {
-    // 触发重绘
+
     update();
 }
 
@@ -139,24 +135,20 @@ double MpvWidget::position() const {
     return position_;
 }
 
-// 静态事件回调
 void MpvWidget::on_mpv_events(void *ctx) {
     QMetaObject::invokeMethod(static_cast<MpvWidget*>(ctx), "handleMpvEvents", Qt::QueuedConnection);
 }
 
-// 处理事件队列
 void MpvWidget::handleMpvEvents() {
     while (mpv_) {
         mpv_event *event = mpv_wait_event(mpv_, 0);
         if (event->event_id == MPV_EVENT_NONE) {
             break;
         }
-        
-        // 处理事件
+
         switch (event->event_id) {
         case MPV_EVENT_FILE_LOADED:
             qDebug() << "File loaded";
-            // 获取视频时长
             mpv_get_property_async(mpv_, 0, "duration", MPV_FORMAT_DOUBLE);
             break;
             

@@ -17,9 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Qt MPV Player");
     //resize(800, 600);
     
-    // 自动播放视频
     QTimer::singleShot(100, this, [this]() {
-        // 自动查找视频文件
         QString videoDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
         QDir dir(videoDir);
         QStringList videos = dir.entryList({"*.mp4", "*.mkv", "*.avi", "*.mov", "*.mpg"}, QDir::Files);
